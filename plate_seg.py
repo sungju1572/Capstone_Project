@@ -41,11 +41,11 @@ for file in file_list:
     height, width, channel = img.shape #이미지 사이즈 저장
     
     
-    height_rate = int(height/5)
-    width_rate = int(width/5)
+  #  height_rate = int(height/5)
+  #  width_rate = int(width/5)
 
 
-    img = img[height_rate: height-height_rate , width_rate : width-width_rate]
+   # img = img[height_rate: height-height_rate , width_rate : width-width_rate]
     
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #gray 로 사진 변환
     #plt.figure(figsize=(12, 10))
@@ -229,8 +229,11 @@ for file in file_list:
     #번호판 영역 추출
     PLATE_WIDTH_PADDING = 1.3
     PLATE_HEIGHT_PADDING = 1.5
-    MIN_PLATE_RATIO = 3
-    MAX_PLATE_RATIO = 10
+    PLATE_RATIO_new_long = 5.5
+    PLATE_RATIO_new_short = 4.5
+
+    PLATE_RATIO_old_long = 2.5
+    PLATE_RATIO_old_short = 1.5
     
     plate_imgs = []
     plate_infos = []
@@ -268,9 +271,10 @@ for file in file_list:
             patchSize=(int(plate_width), int(plate_height)), 
             center=(int(plate_cx), int(plate_cy))
         )
-    
-        #if img_cropped.shape[1] / img_cropped.shape[0] < MIN_PLATE_RATIO or img_cropped.shape[1] / img_cropped.shape[0] < MIN_PLATE_RATIO > MAX_PLATE_RATIO:
-        #    continue
+#        ratio = img_cropped.shape[1] / img_cropped.shape[0] #비율
+        
+#        if ratio < PLATE_RATIO_new_long and ratio > PLATE_RATIO_new_short  or ratio < PLATE_RATIO_old_long and ratio > PLATE_RATIO_old_short:
+        
     
         plate_imgs.append(img_cropped)
         plate_infos.append({
@@ -358,25 +362,18 @@ for file in file_list:
         info = plate_infos[longest_idx]
         chars = plate_chars[longest_idx]
 
-
-
         label = file_name
         print(label)
         print(chars)
         if label == chars:
             correct_len +=1
+            print("-----------------------")
+            print("정답")
+            print("-----------------------")
     else:
         correct_len += 0
+        print("실패")
 
-
-    print("정확도 :", (correct_len/len(file_list))*100)
-#img_out = img.copy()
-
-#cv2.rectangle(img_out, pt1=(info['x'], info['y']), pt2=(info['x']+info['w'], info['y']+info['h']), color=(255,0,0), thickness=2)
-
-#cv2.imwrite(chars + '.jpg', img_out)
-
-#plt.figure(figsize=(12, 10))
-#plt.imshow(img_out)
+    print("정확도 :", round((correct_len/len(file_list))*100,2))
 
 
